@@ -6,48 +6,55 @@ import java.io.IOException;
 
 public class App {
 
-    public static void main(String[] args){
-    			
-    	 if (args.length < 1) {
-               System.out.println("input is missing");		
-	            return;
-	        }
+	public static void main(String[] args) {
 
-	        String inputFile = args[0];
+		// if file is missing
+		if (args.length < 1) {
+			System.out.println("input is missing");
+			return;
+		}
 
-	        try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
-	            String line = reader.readLine();
-	            if (line == null || line.isEmpty()) {
-	                System.out.println("Input file is empty.");
-	                return;
-	            }
-	            String[] plateauSize = line.split("\\s+");
-	            
-	            if (plateauSize.length < 2) {
-	                System.out.println("Invalid plateau coordinates.");
-	                return;
-	            }
-	            
-	            int maxX = Integer.parseInt(plateauSize[0]);
-	            int maxY = Integer.parseInt(plateauSize[1]);
-	          
-	            String roverLine;
-	            while ((roverLine = reader.readLine()) != null) {
-	                String[] position = roverLine.split(" ");
-	                int x = Integer.parseInt(position[0]);
-	                int y = Integer.parseInt(position[1]);
-	                char heading = position[2].charAt(0);
+		String inputFile = args[0];
 
-	                Rovers rover = new Rovers(x, y, heading, maxX, maxY);
+		try (BufferedReader reader = new BufferedReader(new FileReader(inputFile))) {
 
-	                String instructions = reader.readLine();
-	                rover.processInstructions(instructions);
-	                
-	                System.out.println(rover.getPosition());
-	            }
-	            
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        }
-    }
+			// read the first line
+			String line = reader.readLine();
+
+			if (line == null || line.isEmpty()) {
+				System.out.println("Input file is empty.");
+				return;
+			}
+
+			String[] plateauSize = line.trim().split("\\s+");
+
+			// verify if x and y exists
+			if (plateauSize.length < 2) {
+				System.out.println("Invalid plateau coordinates.");
+				return;
+			}
+
+			PlateauSize size = Parser.parseSize(plateauSize);
+
+			if (size != null) {
+				String roverLine;
+				while ((roverLine = reader.readLine()) != null) {
+					String[] positionTab = roverLine.split("\\s+");
+
+					Position position = Parser.parsePosition(positionTab);
+
+					if (position != null) {
+						Rovers rover = new Rovers(position.getX(), position.getY(), position.getHeading(),
+								size.getMaxX(), size.getMaxY());
+						String instructions = reader.readLine();
+						rover.processInstructions(instructions);
+						System.out.println(rover.getPosition());
+					}
+				}
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }
