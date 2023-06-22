@@ -7,7 +7,9 @@ import java.io.IOException;
 public class App {
 
     public static void main(String[] args){
+    	
     	 if (args.length < 1) {
+    		
 	            return;
 	        }
 
@@ -18,7 +20,7 @@ public class App {
 	            String[] plateauSize = plateauSizeLine.split(" ");
 	            int plateauWidth = Integer.parseInt(plateauSize[0]);
 	            int plateauHeight = Integer.parseInt(plateauSize[1]);
-
+	          
 	            String roverLine;
 	            while ((roverLine = reader.readLine()) != null) {
 	                String[] position = roverLine.split(" ");
@@ -30,6 +32,8 @@ public class App {
 
 	                String instructions = reader.readLine();
 	                rover.processInstructions(instructions);
+	                
+	                System.out.println(rover.getPosition());
 	            }
 	        } catch (IOException e) {
 	            e.printStackTrace();
